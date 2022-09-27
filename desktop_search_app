@@ -1,0 +1,119 @@
+
+from tkinter import *
+import os
+
+
+#function to display list of files which matches search command
+def showlist_files():
+    """funtion to show the list of
+    files"""
+    inp = txtfld1.get()
+    def find_files(filename, search_path):
+        result = []
+        for root, dir, files in os.walk(search_path):
+            if filename in files:
+                result.append(os.path.join(root, filename))
+            else:
+                for i in files:
+                    if filename==i.split(".")[0]:
+                        result.append(os.path.join(root, i))
+        return result
+    lis=["D:\\","E:\\"]
+    for i in lis:
+        s=find_files(inp,i)
+        print(f"files found in {i} are follwoing:  ")
+        for i in s:
+            print(i)
+        for i in s:
+            op1.insert(END, i)
+            op1.insert(END, "\n")
+            
+            
+#function to display list of files and merge files of same extension and save in a new file of name xyz1.txt 
+def showlist_ext():
+    """function to display and merge files
+        of same extensions"""
+    inp = txtfld2.get()
+    inp1=inp[1:]
+    import os
+    def find_files1(filename, search_path):
+        result = []
+        for root, dir, files in os.walk(search_path):
+            for i in files:
+                    try:
+                        a=i.split(".")[1]
+                        if filename==a:
+                            result.append(os.path.join(root, i))
+                    except Exception as e:
+                        pass
+        return result
+    lis=["D:\\","E:\\"]
+    for i in lis:
+        s=find_files1(inp1,i)
+        print(f"files found in {i} are follwoing:  ")
+        for j in s:
+            print(j)
+        for k in s:
+            op2.insert(END, k)
+            op2.insert(END, "\n")
+        f1=open(f"{i}xyz1.txt","w")
+        for l in s:
+            if inp1=="pdf":
+                from pdfminer.high_level import extract_text
+                text = extract_text(l)
+                text1=str(text.encode("utf-8"))
+                f1.write(text1)
+                f1.write(f"-------------this is the end of file----------------------------")
+                f1.write("\n")
+            else:
+                f=open(l ,"r", errors="ignore")
+                a=f.read()
+                f1.write(a)
+                f1.write(f"-------------this is the end of file----------------------------")
+                f1.write("\n")
+                f.close()
+        f1.close()
+        f1=open(f"{i}xyz1.txt","r")
+        a=f1.read()
+        print(a)
+        print(f"merged file for {i} drive created at location: {i}xyz1.txt")
+        op3.insert(END, f"merged file for {i} drive created at location: {i}xyz1.txt")
+        op3.insert(END, "\n")
+        f1.close()
+            
+#defining buttons,lables,text box and entry box in UI Window           
+window=Tk()
+
+btn1=Button(window, text="SEARCH", fg='blue', command=showlist_files)
+btn1.place(x=350, y=100)
+
+btn2=Button(window, text="MERGE", fg='blue', command=showlist_ext)
+btn2.place(x=350, y=320)
+
+op1= Text(window,height = 5, width = 100, bd = 7)
+op1.place(x=10, y=140)
+
+op2= Text(window,height = 5, width = 100, bd = 7)
+op2.place(x=10, y=370)
+
+op3= Text(window,height = 5, width = 70, bd = 7)
+op3.place(x=10, y=500)
+
+lbl3=Label(window, text="Merged file location for different drives..", fg='red', font=("Helvetica", 10))
+lbl3.place(x=10, y=470)
+
+lbl1=Label(window, text="Search for files with or without extension ex. xyz or xyz.txt", fg='red', font=("Helvetica", 10))
+lbl1.place(x=60, y=50)
+
+lbl2=Label(window, text="Search files for extension ex. .txt , .pdf ", fg='red', font=("Helvetica", 10))
+lbl2.place(x=60, y=280)
+
+txtfld1=Entry(window, text="enter the file name with or without extension", bd=7)
+txtfld1.place(x=100, y=100)
+
+txtfld2=Entry(window, text="enter the extension with .", bd=7)
+txtfld2.place(x=100, y=320)
+
+window.title('DESKTOP SEARCH APP')
+window.geometry("1000x600+10+10")
+window.mainloop()
